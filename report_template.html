@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Performance Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* 🚀 CHAMELEON MODE: Premium ambient blue velvet glow spanning the desktop view space */
+            background: radial-gradient(circle at 50% 0%, {{ theme_color }}15 0%, #030712 65%, #010205 100%);
+            color: #f1f5f9;
+            margin: 0;
+            padding: 24px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* 🚀 CHAMELEON MODE: Ultra-Premium Dynamic Header Gradient Accent */
+        .header {
+            background: linear-gradient(135deg, {{ theme_color }}25 0%, rgba(15, 23, 42, 0.4) 50%, rgba(2, 6, 23, 0.9) 100%);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+            margin-bottom: 35px;
+            border: 1px solid {{ theme_color }}30;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #3b82f6, {{ theme_color }}, #6366f1);
+        }
+        .header h1 { 
+            margin: 0; 
+            font-size: 36px; 
+            font-weight: 800; 
+            letter-spacing: -1px;
+            background: linear-gradient(90deg, #ffffff, #f1f5f9, {{ theme_color }});
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            color: #cbd5e1 !important; /* 🚀 FIXED: Upgraded contrast from #94a3b8 for perfect readability */
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        
+        /* System Engine Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 15px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .pulse-dot {
+            width: 8px; height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+        
+        /* Cyberpunk Neon Glass Cards */
+        .card {
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(12px);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: {{ theme_color }}40;
+            box-shadow: 0 15px 30px -10px {{ theme_color }}15;
+            background: rgba(15, 23, 42, 0.8);
+        }
+        .card h3 { 
+            margin: 0 0 12px 0; 
+            font-size: 12px; 
+            color: #94a3b8; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            font-weight: 700; 
+        }
+        .card .value { font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; }
+        
+        .grid-charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 30px;
+            margin-bottom: 35px;
+        }
+        
+        /* Sleek Luxury Data Panel Wrappers */
+        .chart-box, .list-box {
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(12px);
+            padding: 30px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        .chart-box h2, .list-box h2 { 
+            margin: 0 0 25px 0; 
+            font-size: 16px; 
+            color: #f1f5f9; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
+            padding-bottom: 15px; 
+        }
+        
+        /* Named container height classes to cleanly split parent elements from child canvases */
+        .chart-container-wrapper {
+            position: relative;
+            height: 380px;
+        }
+        
+        ul { padding-left: 20px; margin: 0; color: #94a3b8; line-height: 2.2; font-size: 15px; }
+        li strong { color: #f1f5f9; font-weight: 600; }
+        
+        /* =======================================================
+            EXECUTIVE PRINT MATRIX (A4 COMPACT MONOCHROME LAYOUT)
+           ======================================================= */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                margin: 0 !important; 
+                padding: 10mm !important;
+                font-size: 10pt !important;
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important;
+            }
+            .container {
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+            
+            /* Compact Header: Eradicates massive padding to save vertical space */
+            .header {
+                background: #f8fafc !important;
+                border: 1px solid #cbd5e1 !important;
+                padding: 15px !important;
+                box-shadow: none !important;
+                margin-bottom: 15px !important;
+                page-break-after: avoid !important;
+            }
+            .header::before { display: none !important; }
+            .header h1 {
+                background: none !important;
+                color: #000000 !important;
+                -webkit-text-fill-color: #000000 !important;
+                font-size: 24px !important;
+            }
+            .header p {
+                color: #334155 !important;
+                -webkit-text-fill-color: #334155 !important;
+                font-size: 11px !important;
+            }
+            .status-badge { display: none !important; }
+
+            /* Grid Cards Layout: Tight row alignment */
+            .grid-cards {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                gap: 10px !important;
+                margin-bottom: 15px !important;
+                page-break-after: avoid !important;
+            }
+            .grid-cards .card {
+                flex: 1 !important;
+                background: #ffffff !important;
+                border: 1px solid #cbd5e1 !important;
+                padding: 10px !important;
+                margin-bottom: 0 !important;
+                box-shadow: none !important;
+                border-top: 3px solid #000000 !important;
+            }
+            .card h3 { color: #475569 !important; font-size: 9px !important; }
+            .card .value { color: #000000 !important; font-size: 18px !important; font-weight: 700 !important; }
+
+            /* 🚀 SQUISH RATIO ACTIVATE: Fits charts and graphs side-by-side on PAGE 1 */
+            .grid-charts {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                gap: 15px !important;
+                margin-bottom: 15px !important;
+                page-break-inside: avoid !important;
+                page-break-after: avoid !important;
+            }
+            .grid-charts .chart-box {
+                width: 49% !important; /* Forces perfect side-by-side symmetry */
+                flex: none !important;
+                background: #ffffff !important;
+                border: 1px solid #cbd5e1 !important;
+                padding: 12px !important;
+                box-shadow: none !important;
+                box-sizing: border-box !important;
+            }
+            .chart-box h2 {
+                color: #000000 !important;
+                font-size: 11px !important;
+                margin-bottom: 10px !important;
+                padding-bottom: 5px !important;
+                border-bottom: 1px solid #e2e8f0 !important;
+            }
+            
+            /* Drastically downscales chart canvas heights so they pack tightly into Page 1 */
+            .chart-container-wrapper {
+                height: 170px !important; 
+            }
+            canvas {
+                max-width: 100% !important;
+                height: 170px !important;
+            }
+
+            /* Portfolio Table Matrix: Pushed cleanly to Page 2 if needed, or fills bottom of Page 1 */
+            .list-box {
+                background: #ffffff !important;
+                border: 1px solid #cbd5e1 !important;
+                padding: 15px !important;
+                box-shadow: none !important;
+                margin-top: 10px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+                page-break-before: auto !important;
+            }
+            .list-box h2 {
+                color: #000000 !important;
+                font-size: 11px !important;
+                border-bottom: 1px solid #e2e8f0 !important;
+            }
+            ul { color: #000000 !important; line-height: 1.8 !important; font-size: 11px !important; }
+            li strong { color: #000000 !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>{{ business_name }}</h1>
+        <p>Interactive Business Intelligence Operations Report &bull; Domain Sector: {{ industry }}</p>
+        <div class="status-badge">
+            <div class="pulse-dot"></div>
+            <span>LIVE INTELLIGENCE STREAM VALIDATED</span>
+        </div>
+    </div>
+
+    <div class="grid-cards">
+        <div class="card" style="border-top: 3px solid {{ theme_color }}; box-shadow: 0 4px 20px -2px {{ theme_color }}20;">
+            <h3>Gross Sales Volume</h3>
+            <div class="value" style="color: {{ theme_color }};">Rs. {{ total_revenue }}</div>
+        </div>
+        <div class="card" style="border-top: 3px solid {{ theme_color }}; box-shadow: 0 4px 20px -2px {{ theme_color }}20;">
+            <h3>Calculated Tax Prov.</h3>
+            <div class="value" style="color: {{ theme_color }};">Rs. {{ total_tax }}</div>
+        </div>
+        <div class="card" style="border-top: 3px solid {{ theme_color }}; box-shadow: 0 4px 20px -2px {{ theme_color }}20;">
+            <h3>Top Billing Account</h3>
+            <div class="value" style="font-size: 16px; margin-top: 6px; line-height: 1.4; color: #ffffff;">{{ top_customer }}</div>
+        </div>
+    </div>
+
+    <div class="grid-charts">
+        <div class="chart-box">
+            <h2>Revenue Contribution by Service Vertical</h2>
+            <div class="chart-container-wrapper">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+        <div class="chart-box">
+            <h2>Client Share Revenue Concentration (70% Threshold)</h2>
+            <div class="chart-container-wrapper">
+                <canvas id="clientChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="list-box">
+        <h2>Strategic Core Accounts Portfolio Matrix</h2>
+        <ul>
+            {{ top_clients_html }}
+        </ul>
+    </div>
+</div>
+
+<script>
+    const categoryLabels = {{ js_category_labels | safe }};
+    const categoryData = {{ js_category_data | safe }};
+    const clientLabels = {{ js_client_labels | safe }};
+    const clientData = {{ js_client_data | safe }};
+    const activePalette = {{ chart_palette | safe }};
+
+    const isPrinting = window.matchMedia('print').matches;
+
+    // 📊 CATEGORY PERFORMANCE BAR CHART
+    const ctxCat = document.getElementById('categoryChart').getContext('2d');
+    new Chart(ctxCat, {
+        type: 'bar',
+        data: {
+            labels: categoryLabels,
+            datasets: [{
+                label: 'Gross Inflow (Rs.)',
+                data: categoryData,
+                backgroundColor: activePalette[0], 
+                borderRadius: 6
+            }]
+        },
+        options: {
+            animation: isPrinting ? false : { duration: 1000 }, 
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { 
+                    grid: { color: isPrinting ? '#e2e8f0' : '#1e293b' }, 
+                    ticks: { color: isPrinting ? '#0f172a' : '#94a3b8' } 
+                },
+                x: { 
+                    grid: { display: false }, 
+                    ticks: { color: isPrinting ? '#0f172a' : '#94a3b8' } 
+                }
+            }
+        }
+    });
+
+    // 🍕 CLIENT SHARE PIE CHART
+    const ctxCli = document.getElementById('clientChart').getContext('2d');
+    new Chart(ctxCli, {
+        type: 'pie',
+        data: {
+            labels: clientLabels,
+            datasets: [{
+                data: clientData,
+                backgroundColor: activePalette, 
+                borderWidth: isPrinting ? 1 : 3,
+                borderColor: isPrinting ? '#ffffff' : '#151f32'
+            }]
+        },
+        options: {
+            animation: isPrinting ? false : { duration: 1000 }, 
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { 
+                    // 🚀 FIX: Automatically moves legend to the bottom during print passes to prevent horizontal clipping!
+                    position: isPrinting ? 'bottom' : 'right', 
+                    labels: { 
+                        boxWidth: 10, 
+                        padding: isPrinting ? 8 : 15, 
+                        color: isPrinting ? '#000000' : '#94a3b8',
+                        font: { size: isPrinting ? 10 : 12, weight: '500' } 
+                    } 
+                } 
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

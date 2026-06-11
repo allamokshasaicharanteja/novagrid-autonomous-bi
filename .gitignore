@@ -1,0 +1,15 @@
+# Ignore sensitive security credentials
+.env
+
+# Ignore processed data dumps so your GitHub stays clean
+02_processed_archive/
+*Stellar_Bio-Pharma*
+*Apex_Orbital*
+*Vanguard_Cloud*
+index.html
+massive_market_data.csv
+sales_data.csv
+
+# Ignore python caching garbage
+__pycache__/
+*.pyc
