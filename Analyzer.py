@@ -74,21 +74,26 @@ print(f"[LAYOUT DISCOVERY]: Data headers successfully localized at Row Index [{h
 
 if header_row_index > 0:
     try:
+        # 🚀 FIX: Load rows as raw strings explicitly to completely safeguard complex metadata configurations
         meta_df = pd.read_csv(target_csv_file, nrows=header_row_index, header=None, on_bad_lines='skip', dtype=str)
         if not meta_df.empty:
+            # Row 1 (Index 0) is always the Business Name
             business_name = str(meta_df.iloc[0, 0]).strip()
             if pd.isna(business_name) or business_name == "" or business_name.lower() == "nan":
                 business_name = "Standard Enterprise Client"
             
+            # 🚀 FIX BUG 1: Case-insensitive, robust partial-string scanner node
             for r_idx in range(len(meta_df)):
                 for c_idx in range(len(meta_df.columns) - 1):
                     key_cell = str(meta_df.iloc[r_idx, c_idx]).strip().lower()
                     val_cell = str(meta_df.iloc[r_idx, c_idx + 1]).strip()
                     
+                    # Target partial words "industry" or "domain" completely case-insensitively
                     if "industry" in key_cell or "domain" in key_cell:
                         if val_cell and val_cell.lower() != "nan":
                             industry_tag = val_cell
                     
+                    # Intercept operational tax keys smoothly
                     if "tax" in key_cell or "%" in val_cell:
                         val_str = val_cell.replace('%', '').strip()
                         if val_str.replace('.', '', 1).isdigit():
@@ -99,6 +104,7 @@ if header_row_index > 0:
 
 print(f"[PROFILE MATCHED]: Client Identity: {business_name} | Domain: {industry_tag} | Applied Tax: {int(tax_rate*100)}%")
 
+# 🌌 COSMOS REVERT CORE: Universal theme mapping to the ultra-premium dark cosmic blue layout palette
 theme_color = "#3b82f6"  
 chart_palette = json.dumps(['#3b82f6', '#60a5fa', '#2563eb', '#1d4ed8', '#1e40af', '#475569'])
 
@@ -252,6 +258,7 @@ try:
     time.sleep(3.5) 
     
     print("Executing high-definition layout snapshot...")
+    # 🚀 FIX BUG 2: Professional-grade publication template vectors for A4 PDF page scaling
     print_options = {
         'landscape': False,
         'displayHeaderFooter': True,      
@@ -286,6 +293,7 @@ try:
     with open(output_pdf_path, 'wb') as f:
         f.write(pdf_bytes)
     print("[SUCCESS] HD PDF Report compiled successfully.")
+    
 
     # ==============================================================================
     # 🦾 AUTONOMOUS INGRESS NETWORK DISCOVERY BLOCK (ZERO-TOUCH LINK EXTRACTION)
