@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Performance Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* 🚀 CHAMELEON MODE: Dynamic ambient glow matching the active industry cluster */
+            background: radial-gradient(circle at 50% 0%, #3b82f615 0%, #030712 65%, #010205 100%);
+            color: #f1f5f9;
+            margin: 0;
+            padding: 24px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* 🚀 CHAMELEON MODE: Ultra-Premium Dynamic Header Gradient Accent */
+        .header {
+            background: linear-gradient(135deg, #3b82f625 0%, rgba(15, 23, 42, 0.4) 50%, rgba(2, 6, 23, 0.9) 100%);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+            margin-bottom: 35px;
+            border: 1px solid #3b82f630;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #3b82f6, #6366f1);
+        }
+        .header h1 { 
+            margin: 0; 
+            font-size: 36px; 
+            font-weight: 800; 
+            letter-spacing: -1px;
+            background: linear-gradient(90deg, #ffffff, #f1f5f9, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            color: #cbd5e1 !important; /* 🚀 FIXED: Upgraded contrast from #94a3b8 for perfect readability */
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        
+        /* System Engine Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 15px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .pulse-dot {
+            width: 8px; height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+        
+        /* Cyberpunk Neon Glass Cards */
+        .card {
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(12px);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: #3b82f640;
+            box-shadow: 0 15px 30px -10px #3b82f615;
+            background: rgba(15, 23, 42, 0.8);
+        }
+        .card h3 { 
+            margin: 0 0 12px 0; 
+            font-size: 12px; 
+            color: #94a3b8; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            font-weight: 700; 
+        }
+        .card .value { font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; }
+        
+        .grid-charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 30px;
+            margin-bottom: 35px;
+        }
+        
+        /* Sleek Luxury Data Panel Wrappers */
+        .chart-box, .list-box {
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(12px);
+            padding: 30px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        .chart-box h2, .list-box h2 { 
+            margin: 0 0 25px 0; 
+            font-size: 16px; 
+            color: #f1f5f9; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
+            padding-bottom: 15px; 
+        }
+        
+        ul { padding-left: 20px; margin: 0; color: #94a3b8; line-height: 2.2; font-size: 15px; }
+        li strong { color: #f1f5f9; font-weight: 600; }
+        
+        /* =======================================================
+            EXECUTIVE PRINT MATRIX (A4 PERFECT PDF OVERRIDES)
+           ======================================================= */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #0f172a !important;
+                padding: 0 !important;
+                font-size: 11pt !important;
+            }
+            .container {
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+            .header {
+                background: #f8fafc !important;
+                border: 1px solid #cbd5e1 !important;
+                padding: 25px !important;
+                box-shadow: none !important;
+            }
+            .header h1 {
+                background: none !important;
+                color: #0f172a !important;
+                -webkit-text-fill-color: #0f172a !important;
+            }
+            .grid-cards, .grid-charts {
+                display: block !important;
+            }
+            .card, .chart-box, .list-box {
+                background: #ffffff !important;
+                border: 1px solid #cbd5e1 !important;
+                box-shadow: none !important;
+                color: #0f172a !important;
+                margin-bottom: 25px !important;
+                page-break-inside: avoid !important;
+                padding: 20px !important;
+                backdrop-filter: none !important;
+            }
+            .card h3, .chart-box h2, .list-box h2 {
+                color: #475569 !important;
+                border-bottom-color: #e2e8f0 !important;
+            }
+            .card .value, li strong, ul {
+                color: #0f172a !important;
+            }
+            .status-badge {
+                display: none !important; 
+            }
+            canvas {
+                max-width: 100% !important;
+                height: 320px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Quantum Horizon Capital</h1>
+        <p>Interactive Business Intelligence Operations Report &bull; Domain Sector: Technology</p>
+        <div class="status-badge">
+            <div class="pulse-dot"></div>
+            <span>LIVE INTELLIGENCE STREAM VALIDATED</span>
+        </div>
+    </div>
+
+    <div class="grid-cards">
+        <div class="card" style="border-top: 3px solid #3b82f6; box-shadow: 0 4px 20px -2px #3b82f620;">
+            <h3>Gross Sales Volume</h3>
+            <div class="value" style="color: #3b82f6;">Rs. 456,422,111</div>
+        </div>
+        <div class="card" style="border-top: 3px solid #3b82f6; box-shadow: 0 4px 20px -2px #3b82f620;">
+            <h3>Calculated Tax Prov.</h3>
+            <div class="value" style="color: #3b82f6;">Rs. 82,155,980</div>
+        </div>
+        <div class="card" style="border-top: 3px solid #3b82f6; box-shadow: 0 4px 20px -2px #3b82f620;">
+            <h3>Top Billing Account</h3>
+            <div class="value" style="font-size: 16px; margin-top: 6px; line-height: 1.4; color: #ffffff;">Teja Das (Spent Rs. 126,430,676)</div>
+        </div>
+    </div>
+
+    <div class="grid-charts">
+        <div class="chart-box">
+            <h2>Revenue Contribution by Service Vertical</h2>
+            <div style="position: relative; height:380px;">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+        <div class="chart-box">
+            <h2>Client Share Revenue Concentration (70% Threshold)</h2>
+            <div style="position: relative; height:380px;">
+                <canvas id="clientChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="list-box">
+        <h2>Strategic Core Accounts Portfolio Matrix</h2>
+        <ul>
+            <li><strong>Teja Das</strong>: Rs. 126,430,676 (27.7%)</li><li><strong>Naveen Kumar</strong>: Rs. 95,650,356 (21.0%)</li><li><strong>Sunitha Alla</strong>: Rs. 68,977,651 (15.1%)</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    const categoryLabels = ["SaaS Core Enterprise", "API Ingress Traffic", "Liquidity Pool Routing", "Edge CDN Bandwidth", "Quantum Node Compute", "Database Replication", "High-Frequency Arbitrage Engine", "Risk Ledger Nodes"];
+    const categoryData = [92201569, 85683813, 75942065, 68513736, 52311610, 51526377, 28689233, 1553708];
+    const clientLabels = ["Teja Das", "Naveen Kumar", "Sunitha Alla", "Ananya Rao Engine", "Moksha Alla", "Other Accounts"];
+    const clientData = [126430676, 95650356, 68977651, 68315007, 65406017, 31642404];
+    const activePalette = ["#3b82f6", "#60a5fa", "#2563eb", "#1d4ed8", "#1e40af", "#475569"];
+
+    const isPrinting = window.matchMedia('print').matches;
+
+    // 📊 CATEGORY PERFORMANCE BAR CHART
+    const ctxCat = document.getElementById('categoryChart').getContext('2d');
+    new Chart(ctxCat, {
+        type: 'bar',
+        data: {
+            labels: categoryLabels,
+            datasets: [{
+                label: 'Gross Inflow (Rs.)',
+                data: categoryData,
+                backgroundColor: activePalette[0], 
+                borderRadius: 6
+            }]
+        },
+        options: {
+            animation: false, 
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { 
+                    grid: { color: isPrinting ? '#e2e8f0' : '#1e293b' }, 
+                    ticks: { color: isPrinting ? '#0f172a' : '#94a3b8' } 
+                },
+                x: { 
+                    grid: { display: false }, 
+                    ticks: { color: isPrinting ? '#0f172a' : '#94a3b8' } 
+                }
+            }
+        }
+    });
+
+    // 🍕 CLIENT SHARE PIE CHART
+    const ctxCli = document.getElementById('clientChart').getContext('2d');
+    new Chart(ctxCli, {
+        type: 'pie',
+        data: {
+            labels: clientLabels,
+            datasets: [{
+                data: clientData,
+                backgroundColor: activePalette, 
+                borderWidth: isPrinting ? 1 : 3,
+                borderColor: isPrinting ? '#ffffff' : '#151f32'
+            }]
+        },
+        options: {
+            animation: false, 
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { 
+                    position: 'right', 
+                    labels: { 
+                        boxWidth: 12, 
+                        padding: 15, 
+                        color: isPrinting ? '#0f172a' : '#94a3b8',
+                        font: { size: 12, weight: '500' } 
+                    } 
+                } 
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

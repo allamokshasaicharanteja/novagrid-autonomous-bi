@@ -1,0 +1,16 @@
+1.Open Launchserver.bat-->(Minimize it)
+
+2.Open 	CMD through the folder and paste-->(ngrok http 127.0.0.1:8000)
+
+3.Launch the **auto watcher** and let everyone see it.
+
+4.Launch the Generator to generate the data in the root folder.
+
+5.Now drop the generated file into the incoming drops folder.
+
+6.Watch and Show it in action.
+
+7.Open the personalized Folder for that company and show the QR.
+
+
+

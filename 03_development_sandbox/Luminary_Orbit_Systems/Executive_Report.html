@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Performance Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/char t.js"></script>
+    <style>
+        body {
+    font-family: 'Inter', sans-serif;
+    /* --- NEW: DYNAMIC BACKGROUND CAMOUFLAGE --- */
+    background: radial-gradient(circle at 50% 0%, #f9731615 0%, #0b111e 75%, #05080f 100%);
+    color: #f1f5f9;
+    margin: 0;
+    padding: 24px;
+    min-height: 100vh;
+}
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Ultra-Premium Animated Glassmorphism Header */
+        .header {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+            margin-bottom: 35px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #10b981, #6366f1);
+        }
+        .header h1 { 
+            margin: 0; 
+            font-size: 36px; 
+            font-weight: 800; 
+            letter-spacing: -1px;
+            background: linear-gradient(90deg, #ffffff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* System Engine Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 15px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .pulse-dot {
+            width: 8px; height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+        
+        /* Cyberpunk Neon Glass Cards */
+        .card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 15px 30px -10px rgba(59, 130, 246, 0.25);
+            background: rgba(30, 41, 59, 0.7);
+        }
+        .card h3 { margin: 0 0 12px 0; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
+        .card .value { font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; }
+        
+        .grid-charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 30px;
+            margin-bottom: 35px;
+        }
+        
+        /* Sleek Luxury Data Panel Wrappers */
+        .chart-box, .list-box {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            padding: 30px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+        }
+        .chart-box h2, .list-box h2 { 
+            margin: 0 0 25px 0; 
+            font-size: 16px; 
+            color: #f1f5f9; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+            padding-bottom: 15px; 
+        }
+        
+        ul { padding-left: 20px; margin: 0; color: #94a3b8; line-height: 2.2; font-size: 15px; }
+        li strong { color: #f1f5f9; font-weight: 600; }
+        
+        /* Print Engine Reset Matrix */
+        @media print {
+            body { padding: 0; background: white; color: #0f172a; }
+            .header { background: #1e3a8a; border-radius: 0; padding: 25px; box-shadow: none; border: none; }
+            .header h1 { -webkit-text-fill-color: initial; color: white; }
+            .status-badge { display: none; }
+            .chart-box, .card, .list-box { box-shadow: none; border: 1px solid #e2e8f0; background: white; color: #0f172a; backdrop-filter: none; }
+            .card .value { color: #1e3a8a; }
+            .card h3 { color: #64748b; }
+            .chart-box h2, .list-box h2 { color: #0f172a; border-bottom: 1px solid #e2e8f0; }
+            ul { color: #334155; }
+            li strong { color: #0f172a; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Luminary Orbit Systems</h1>
+        <p>Interactive Business Intelligence Operations Report</p>
+        <div class="status-badge">
+            <div class="pulse-dot"></div>
+            <span>LIVE INTELLIGENCE STREAM VALIDATED</span>
+        </div>
+    </div>
+
+    <div class="grid-cards">
+        <div class="card" style="border-left: 4px solid #3b82f6;">
+            <h3>Gross Sales Volume</h3>
+            <div class="value" style="color: #60a5fa;">Rs. 996,989,339</div>
+        </div>
+        <div class="card" style="border-left: 4px solid #10b981;">
+            <h3>Calculated Tax Prov.</h3>
+            <div class="value" style="color: #34d399;">Rs. 49,849,467</div>
+        </div>
+        <div class="card" style="border-left: 4px solid #6366f1;">
+            <h3>Top Billing Account</h3>
+            <div class="value" style="font-size: 16px; margin-top: 6px; line-height: 1.4; color: #a5b4fc;">Naveen Kumar (Spent Rs. 285,598,649)</div>
+        </div>
+    </div>
+
+    <div class="grid-charts">
+        <div class="chart-box">
+            <h2>Revenue Contribution by Service Vertical</h2>
+            <div style="position: relative; height:380px;">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+        <div class="chart-box">
+            <h2>Client Share Revenue Concentration (70% Threshold)</h2>
+            <div style="position: relative; height:380px;">
+                <canvas id="clientChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="list-box">
+        <h2>Strategic Core Accounts Portfolio Matrix</h2>
+        <ul>
+            <li><strong>Naveen Kumar</strong>: Rs. 285,598,649 (28.6%)</li><li><strong>Moksha Alla</strong>: Rs. 239,312,022 (24.0%)</li><li><strong>Sunitha Alla</strong>: Rs. 195,762,166 (19.6%)</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    // 🔗 FIXED: Aligned perfectly with your Python Section 6 Context Dictionary keys!
+    const categoryLabels = ["Avionics Suites", "Drone Guidance Software", "Telemetry Hardware", "Propulsion Modules", "Satellite Transponders"];
+    const categoryData = [233771117, 222908561, 202086252, 189747890, 148475519];
+    const clientLabels = ["Naveen Kumar", "Moksha Alla", "Sunitha Alla", "Charan Reddy", "Sunitha Sharma", "Other Accounts"];
+    const clientData = [285598649, 239312022, 195762166, 168922684, 2771512, 104622306];
+    const activePalette = ["#f97316", "#fb923c", "#ea580c", "#c2410c", "#9a3412", "#475569"];
+
+    // 📊 CATEGORY PERFORMANCE BAR CHART
+    const ctxCat = document.getElementById('categoryChart').getContext('2d');
+    new Chart(ctxCat, {
+        type: 'bar',
+        data: {
+            labels: categoryLabels,
+            datasets: [{
+                label: 'Gross Inflow (Rs.)',
+                data: categoryData,
+                backgroundColor: activePalette[0], 
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } },
+                x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+            }
+        }
+    });
+
+    // 🍕 CLIENT SHARE PIE CHART
+    const ctxCli = document.getElementById('clientChart').getContext('2d');
+    new Chart(ctxCli, {
+        type: 'pie',
+        data: {
+            labels: clientLabels,
+            datasets: [{
+                data: clientData,
+                backgroundColor: activePalette, 
+                borderWidth: 3,
+                borderColor: '#151f32'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { 
+                    position: 'right', 
+                    labels: { 
+                        boxWidth: 12, 
+                        padding: 15, 
+                        color: '#94a3b8',
+                        font: { size: 12, weight: '500' } 
+                    } 
+                } 
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -65,7 +65,7 @@ with open(target_csv_file, 'r', encoding='utf-8', errors='ignore') as f:
             header_row_index = idx
             break
 
-# Step B: Safe metadata extraction if headers are shifted down
+# Step B: Zero-Assumption Self-Healing Metadata Extraction
 if header_row_index is None:
     print("CRITICAL ERROR: Could not locate a valid data schema header matrix inside the file.")
     sys.exit(1)
@@ -74,31 +74,41 @@ print(f"[LAYOUT DISCOVERY]: Data headers successfully localized at Row Index [{h
 
 if header_row_index > 0:
     try:
-        # 🚀 FIX: Load rows as raw strings explicitly to completely safeguard complex metadata configurations
-        meta_df = pd.read_csv(target_csv_file, nrows=header_row_index, header=None, on_bad_lines='skip', dtype=str)
-        if not meta_df.empty:
-            # Row 1 (Index 0) is always the Business Name
-            business_name = str(meta_df.iloc[0, 0]).strip()
-            if pd.isna(business_name) or business_name == "" or business_name.lower() == "nan":
+        # Read everything above the header row index as a pure text list to preserve layout neutrality
+        with open(target_csv_file, 'r', encoding='utf-8', errors='ignore') as f:
+            metadata_lines = [f.readline().strip() for _ in range(header_row_index)]
+        
+        # Clean out empty rows or rows that contain nothing but plain formatting commas
+        valid_meta_lines = [line for line in metadata_lines if line.replace(',', '').strip()]
+        
+        # 🚀 IDENTITY EXTRACTION: The first non-empty text token found is always mapped as our Business Name
+        if valid_meta_lines:
+            first_raw_entry = valid_meta_lines[0].split(',')[0]
+            business_name = first_raw_entry.replace('"', '').strip()
+            if not business_name or business_name.lower() == "nan":
                 business_name = "Standard Enterprise Client"
+
+        # 🚀 DYNAMIC KEYWORD RADAR: Sweep text rows layout-independently
+        for line in valid_meta_lines:
+            cells = [c.replace('"', '').strip() for c in line.split(',') if c.strip()]
             
-            # 🚀 FIX BUG 1: Case-insensitive, robust partial-string scanner node
-            for r_idx in range(len(meta_df)):
-                for c_idx in range(len(meta_df.columns) - 1):
-                    key_cell = str(meta_df.iloc[r_idx, c_idx]).strip().lower()
-                    val_cell = str(meta_df.iloc[r_idx, c_idx + 1]).strip()
-                    
-                    # Target partial words "industry" or "domain" completely case-insensitively
-                    if "industry" in key_cell or "domain" in key_cell:
-                        if val_cell and val_cell.lower() != "nan":
-                            industry_tag = val_cell
-                    
-                    # Intercept operational tax keys smoothly
-                    if "tax" in key_cell or "%" in val_cell:
-                        val_str = val_cell.replace('%', '').strip()
-                        if val_str.replace('.', '', 1).isdigit():
-                            possible_tax = float(val_str)
-                            tax_rate = possible_tax / 100 if possible_tax > 1 else possible_tax
+            for idx, cell in enumerate(cells):
+                cell_lower = cell.lower()
+                
+                # Intercept domain/industry tokens anywhere in the cell space
+                if "industry" in cell_lower or "domain" in cell_lower:
+                    if idx + 1 < len(cells):
+                        industry_tag = cells[idx + 1]
+                        break
+                
+                # Intercept dynamic tax matrices smoothly
+                if "tax" in cell_lower or "%" in cell_lower:
+                    target_text = cells[idx + 1] if (idx + 1 < len(cells)) else cell
+                    clean_tax = target_text.replace('%', '').strip()
+                    if clean_tax.replace('.', '', 1).isdigit():
+                        possible_tax = float(clean_tax)
+                        tax_rate = possible_tax / 100 if possible_tax > 1 else possible_tax
+                        break
     except Exception as e:
         print(f"[WARNING]: Metadata extraction channel bypassed: {str(e)}. Deploying fail-safe profiles.")
 
@@ -258,7 +268,6 @@ try:
     time.sleep(3.5) 
     
     print("Executing high-definition layout snapshot...")
-    # 🚀 FIX BUG 2: Professional-grade publication template vectors for A4 PDF page scaling
     print_options = {
         'landscape': False,
         'displayHeaderFooter': True,      
@@ -461,10 +470,10 @@ if len(sys.argv) > 1:
             
         archive_dest_path = os.path.join(archive_folder, archive_name)
         
-        # 🚀 CYBERSECURITY SECURE PURGE: Shred the raw CSV file to guarantee zero residual data footprints
-        print("🔒 [SECURITY PROTOCOL ACTIVE]: Commencing secure file destruction...")
-        os.remove(target_csv_file)
-        print(f"💥 [SELF-DESTRUCT SUCCESS]: Raw data source file '{target_csv_file}' has been permanently vaporized from disk.")
+        # 🚀 SECURITY ARCHIVE ACTIVE: Move original source datagrid to secure historical repository
+        print("🔒 [SECURITY ARCHIVE ACTIVE]: Archiving original source datagrid to secure repository...")
+        shutil.move(target_csv_file, archive_dest_path)
+        print(f"✅ [ARCHIVE SUCCESS]: Raw data source file securely preserved at: /{archive_dest_path}")
         
         send_live_pipeline_notification(business_name, f"Rs. {total_revenue:,}", len(top_tier_clients), raw_filename)
         
@@ -477,5 +486,11 @@ else:
 try:
     shutil.copy(output_html_path, "index.html")
     print("\n🟢 [SERVER NODE]: Root index.html successfully synchronized with fresh enterprise data.")
+    
+    # 🚀 LIVE QR INTERACTION SYNCHRONIZATION: Force root directory workspace QR code file copy update
+    root_qr_source_path = os.path.join(folder_name, 'Live_Dashboard_QR.png')
+    if os.path.exists(root_qr_source_path):
+        shutil.copy(root_qr_source_path, "Live_Dashboard_QR.png")
+        print("🟢 [SERVER NODE]: Root Live_Dashboard_QR.png updated to reflect current tenant parameters.")
 except Exception as e:
     print(f"\n⚠️  [SERVER NODE WARNING]: Could not duplicate layout to root space: {str(e)}")
